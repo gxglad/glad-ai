@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06060A">
+<title>Glad · AI 影像创作平台</title>
+<meta name="description" content="Glad —— 一句话生成电影级图片与视频。接入多账号额度池，图片视频一次到位。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2329E0FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='17' font-weight='700' fill='%23fff' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ambience"><div class="grid-lines"></div></div>
+
+<!-- 未登录时的遮罩 -->
+<div id="gate" class="modal-mask" style="z-index:150">
+  <div class="modal narrow" style="text-align:center">
+    <div class="modal-body" style="padding:30px 24px">
+      <div class="brand-mark" style="margin:0 auto 16px;width:44px;height:44px;border-radius:13px;font-size:20px">G</div>
+      <div class="t-h1 mb-1">请先登录</div>
+      <div class="t-sm">登录后即可使用全部创作能力，查看你的积分与作品。</div>
+      <div class="col mt-3" style="gap:9px">
+        <a class="btn btn-primary btn-lg btn-block" href="auth.html">登录 / 注册</a>
+        <button class="btn btn-block" id="gate-demo">先用演示账号看一眼（demo / demo123）</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app" hidden>
+
+  <!-- ==================== 侧栏 ==================== -->
+  <aside class="sidebar" id="sidebar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">G</span>
+      <span style="min-width:0">
+        <span class="brand-name" id="brand-name">Glad</span>
+        <span class="brand-sub" id="brand-sub">AI Studio</span>
+      </span>
+    </a>
+
+    <nav class="nav-group">
+      <div class="nav-label">创作</div>
+      <button class="nav-item is-active" data-nav="studio" data-view="studio">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
+        生成工作台
+      </button>
+      <button class="nav-item" data-nav="assets" data-view="assets">
+        <svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="1.6"/></svg>
+        我的作品
+        <span class="tail" id="nav-assets-count">0</span>
+      </button>
+    </nav>
+	
+    <nav class="nav-group">
+      <div class="nav-label">账户</div>
+      <button class="nav-item" data-nav="credits" data-view="credits">
+        <svg class="ico" viewBox="0 0 24 24"><path d="M20 12V8a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6"/><circle cx="17" cy="14" r="1.2"/></svg>
+        积分与充值
+      </button>
+      <button class="nav-item" data-nav="orders" data-view="orders">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2 3h3l2.6 12.4a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.6L21 7H6"/></svg>
+        充值记录
+      </button>
+      <button class="nav-item" data-nav="profile" data-view="profile">
+        <svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg>
+        个人中心
+      </button>
+    </nav>
+
+    <div class="nav-spacer"></div>
+
+    <a class="nav-item hidden" id="nav-admin" href="admin.html">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M12 2.5 20 6v6c0 5-3.4 8.4-8 9.5C7.4 20.4 4 17 4 12V6z"/></svg>
+      管理后台
+      <span class="tail">Admin</span>
+    </a>
+
+    <button class="side-user" id="side-user">
+      <span class="avatar" id="side-avatar">U</span>
+      <span style="min-width:0;flex:1">
+        <span class="t-h3 truncate" style="display:block" id="side-name">用户</span>
+        <span class="t-xs truncate" style="display:block" id="side-mail">—</span>
+      </span>
+      <svg class="ico" style="width:15px;height:15px;stroke:var(--text-4);fill:none;stroke-width:1.8" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>
+    </button>
+  </aside>
+
+  <!-- ==================== 主区 ==================== -->
+  <div class="main">
+
+    <header class="topbar">
+      <button class="nav-toggle" id="nav-toggle" aria-label="菜单">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <div style="min-width:0">
+        <div class="topbar-title" id="page-title">生成工作台</div>
+        <div class="topbar-sub" id="page-sub">选择模型、比例与时长，一句话出片</div>
+      </div>
+      <div class="topbar-right">
+        <span class="pill info hidden" id="pool-pill" title="上游账号池聚合额度">
+          <span class="dot"></span><span id="pool-text">额度池</span>
+        </span>
+        <button class="credit-chip" id="credit-chip" title="我的积分 · 点击充值">
+          <span class="coin">分</span>
+          <span class="val" id="credit-val">0</span>
+          <span class="unit">积分</span>
+          <span class="plus" id="credit-plus">+</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============================================================
+         视图 1 · 生成工作台
+         ============================================================ -->
+    <section class="page" data-panel="studio">
+      <div id="notice-bar" class="card mb-2" style="border-color:rgba(124,92,255,.28)">
+        <div class="card-body row" style="padding:12px 16px;gap:11px">
+          <svg class="ico" style="width:17px;height:17px;flex:none;stroke:#C3B4FF;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+          <div class="t-sm" id="notice-text" style="flex:1">—</div>
+          <button class="x-btn" id="notice-close" aria-label="关闭"><svg viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+        </div>
+      </div>
+
+      <!-- 模式切换 -->
+      <div class="row mt-1 mb-2" style="gap:12px">
+        <div class="segmented seg-brand" id="type-switch">
+          <button data-type="image" class="is-active">
+            <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:5px;stroke:currentColor;fill:none;stroke-width:1.9" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.8" cy="8.8" r="1.8"/><path d="m21 15-4.6-4.6L7 20"/></svg>
+            图片生成
+          </button>
+          <button data-type="video">
+            <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:5px;stroke:currentColor;fill:none;stroke-width:1.9" viewBox="0 0 24 24"><rect x="2.5" y="5" width="14" height="14" rx="3"/><path d="m16.5 10.5 5-3v9l-5-3z"/></svg>
+            视频生成
+          </button>
+        </div>
+        <div class="spacer"></div>
+        <span class="pill" id="engine-pill"><span class="dot pulse"></span><span id="engine-text">演示模式</span></span>
+      </div>
+
+      <div class="studio">
+
+        <!-- ---------- 左：提示词 + 结果 ---------- -->
+        <div class="studio-main">
+
+          <!-- 提示词 -->
+          <div class="prompt-box">
+            <textarea id="prompt" rows="4"
+              placeholder="描述你想要的画面…&#10;例如：夜晚的东京街头，霓虹灯在雨后的路面上晕开，电影感，浅景深"></textarea>
+            <div class="prompt-tools">
+              <button class="btn btn-sm btn-ghost" id="btn-ref" title="上传参考图">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V7M7 11l5-5 5 5M4 20h16"/></svg>
+                参考图
+              </button>
+              <button class="btn btn-sm btn-ghost" id="btn-idea" title="随机灵感">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M16 3h5v5M21 3l-7.5 7.5M8 21H3v-5M3 21l7.5-7.5M16 21h5v-5M14 14l7 7M3 3l6 6"/></svg>
+                灵感
+              </button>
+              <button class="btn btn-sm btn-ghost" id="btn-clear-prompt">清空</button>
+              <div class="spacer"></div>
+              <span class="prompt-count"><span id="prompt-len">0</span> 字</span>
+            </div>
+          </div>
+
+          <!-- 参考图区 -->
+          <div id="ref-zone" class="hidden">
+            <div class="row mb-1" style="gap:8px">
+              <span class="t-xs" id="ref-hint">参考图（可选）</span>
+              <div class="spacer"></div>
+              <span class="t-xs" id="ref-count">0 / 1</span>
+            </div>
+            <div class="row row-wrap" style="align-items:stretch;gap:10px">
+              <div class="dropzone" id="dropzone" style="flex:1;min-width:170px">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 19V7M7 11l5-5 5 5M4 20h16"/></svg>
+                <span>点击或拖入图片</span>
+              </div>
+              <div class="thumbs" id="ref-thumbs"></div>
+            </div>
+            <input type="file" id="file-input" accept="image/*" multiple hidden>
+          </div>
+
+          <!-- 高级参数 -->
+          <details class="card" id="advanced">
+            <summary style="cursor:pointer;padding:12px 16px;font-size:13px;font-weight:580;color:var(--text-2);list-style:none;display:flex;align-items:center;gap:8px">
+              <svg class="ico" style="width:15px;height:15px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-2.87 1.2V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8 19.4a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 3 15"/></svg>
+              高级参数
+              <span class="spacer"></span>
+              <span class="t-xs">反向提示词 · 精细度</span>
+            </summary>
+            <div class="card-body" style="padding-top:4px">
+              <div class="field mb-2">
+                <label class="field-label">反向提示词（不想出现的元素）</label>
+                <textarea class="textarea" id="negative" rows="2" style="min-height:64px"
+                  placeholder="例如：模糊、变形、多余手指、文字水印"></textarea>
+              </div>
+              <div class="field">
+                <div class="row" style="justify-content:space-between">
+                  <label class="field-label">精细度 sample_strength</label>
+                  <span class="t-xs mono-num" id="strength-val">0.50</span>
+                </div>
+                <input type="range" class="slider" id="strength" min="0" max="1" step="0.05" value="0.5">
+                <div class="field-hint" id="strength-hint">数值越高越贴近提示词，越低越自由</div>
+              </div>
+            </div>
+          </details>
+
+          <!-- 结果区 -->
+          <div class="section-head">
+            <div class="t-h2" style="margin-right:auto">本次生成</div>
+            <button class="btn btn-sm btn-ghost" id="btn-clear-results">清空</button>
+          </div>
+          <div id="results">
+            <div class="empty">
+              <span class="ico-lg"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.8" cy="8.8" r="1.8"/><path d="m21 15-4.6-4.6L7 20"/></svg></span>
+              <div class="t-h3">还没有生成内容</div>
+              <div class="t-sm">在左侧输入提示词，调好右侧参数，点击「开始生成」</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------- 右：参数面板 ---------- -->
+        <aside class="studio-side">
+          <div class="card">
+            <div class="card-head">
+              <svg class="ico" style="width:16px;height:16px;stroke:#C3B4FF;fill:none;stroke-width:1.7" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="var(--bg)"/><circle cx="15" cy="12" r="2" fill="var(--bg)"/><circle cx="8" cy="18" r="2" fill="var(--bg)"/></svg>
+              <div class="t-h3">生成参数</div>
+            </div>
+            <div class="card-body col" style="gap:16px">
+
+              <!-- 模型 -->
+              <div class="field">
+                <label class="field-label">
+                  模型
+                  <span class="spacer"></span>
+                  <span class="t-xs" id="model-count"></span>
+                </label>
+                <select class="select" id="model"></select>
+                <div class="field-hint" id="model-desc">—</div>
+              </div>
+
+              <!-- 比例 -->
+              <div class="field">
+                <label class="field-label">画面比例</label>
+                <div class="ratio-grid" id="ratio-grid"></div>
+              </div>
+
+              <!-- 分辨率 -->
+              <div class="field">
+                <label class="field-label">
+                  分辨率
+                  <span class="t-xs" id="res-px" style="margin-left:auto;font-variant-numeric:tabular-nums"></span>
+                </label>
+                <div class="opt-row" id="res-grid"></div>
+              </div>
+
+              <!-- 时长（仅视频） -->
+              <div class="field hidden" id="dur-field">
+                <label class="field-label">视频时长</label>
+                <div class="opt-row" id="dur-grid"></div>
+                <div class="field-hint" id="dur-hint"></div>
+              </div>
+
+              <!-- 数量 -->
+              <div class="field">
+                <label class="field-label">
+                  生成数量
+                  <span class="t-xs" style="margin-left:auto">上游固定 1 张/条</span>
+                </label>
+                <div class="opt-row">
+                  <button class="opt is-active" data-count="1">1</button>
+                  <button class="opt is-disabled" data-count="2">2</button>
+                  <button class="opt is-disabled" data-count="4">4</button>
+                </div>
+              </div>
+
+              <div class="divider" style="margin:0"></div>
+
+              <!-- 预估 -->
+              <div class="row" style="gap:12px">
+                <div class="gen-cost" style="flex:1">
+                  <span>本次消耗</span>
+                  <b id="cost-est">0<span class="u">积分</span></b>
+                </div>
+                <div class="gen-cost" style="text-align:right">
+                  <span>生成后剩余</span>
+                  <b id="cost-after">0<span class="u">积分</span></b>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-lg btn-block" id="btn-generate">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M13 2 4.5 13.5H11L10 22l8.5-11.5H12z"/></svg>
+                <span id="gen-label">开始生成图片</span>
+              </button>
+              <div class="t-xs text-c" id="gen-hint">生成即代表同意平台使用规范</div>
+            </div>
+          </div>
+
+          <!-- 灵感 -->
+          <div class="card">
+            <div class="card-head">
+              <svg class="ico" style="width:16px;height:16px;stroke:var(--text-3);fill:none;stroke-width:1.7" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 1 3.5 10.9c-.5.4-.8 1-.8 1.6v.5h-5.4v-.5c0-.6-.3-1.2-.8-1.6A6 6 0 0 1 12 3"/></svg>
+              <div class="t-h3" style="margin-right:auto">一键灵感</div>
+            </div>
+            <div class="card-body" style="padding-top:12px">
+              <div class="opt-row" id="idea-list"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body" style="padding:14px 16px">
+              <div class="row" style="gap:10px">
+                <svg class="ico" style="width:16px;height:16px;stroke:var(--text-4);fill:none;stroke-width:1.7;flex:none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8h.01"/></svg>
+                <div class="t-xs" style="line-height:1.6">
+                  当前为<b style="color:var(--text-2)">演示模式</b>：不会真的调用上游，作品为本地生成的效果占位图。
+                  接好真接口后，本页无需改动。
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <footer class="foot">
+        <span>© <span id="year"></span> <span id="foot-brand">Glad</span></span>
+        <span class="spacer"></span>
+        <span id="foot-nav"></span>
+      </footer>
+    </section>
+
+    <!-- ============================================================
+         视图 2 · 我的作品
+         ============================================================ -->
+    <section class="page hidden" data-panel="assets">
+      <div class="row mb-2 row-wrap" style="gap:10px">
+        <div class="segmented" id="asset-filter">
+          <button data-f="all" class="is-active">全部</button>
+          <button data-f="image">图片</button>
+          <button data-f="video">视频</button>
+        </div>
+        <div class="input-wrap" style="max-width:250px;flex:1">
+          <span class="pre"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span>
+          <input class="input" id="asset-search" placeholder="搜索提示词…">
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-sm" id="btn-refresh-assets"><svg class="ico" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5"/></svg>刷新</button>
+        <button class="btn btn-sm btn-danger" id="btn-clear-assets"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M10 4h4M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/></svg>清空作品</button>
+      </div>
+      <div id="assets-grid"></div>
+    </section>
+
+    <!-- ============================================================
+         视图 3 · 积分与充值
+         ============================================================ -->
+    <section class="page page-narrow hidden" data-panel="credits">
+      <div class="credit-hero">
+        <div class="eyebrow">当前剩余积分</div>
+        <div class="amount grad-text"><span id="credits-big">0</span></div>
+        <div class="t-sm">1 元 = 10 积分 · 生成时按模型与分辨率扣减</div>
+        <div class="row mt-3 row-wrap" style="gap:10px">
+          <button class="btn btn-primary" id="btn-recharge">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>立即充值
+          </button>
+          <button class="btn" id="btn-goto-studio">去创作</button>
+        </div>
+      </div>
+
+      <div class="grid g-4 mt-3">
+        <div class="stat"><div class="k">累计消耗</div><div class="v" id="st-consumed">0</div><div class="d">历史生成扣减</div></div>
+        <div class="stat"><div class="k">累计充值</div><div class="v" id="st-recharged">0</div><div class="d">已支付订单合计</div></div>
+        <div class="stat"><div class="k">生成次数</div><div class="v" id="st-jobs">0</div><div class="d" id="st-jobs-d">图片 0 · 视频 0</div></div>
+        <div class="stat"><div class="k">VIP 等级</div><div class="v" id="st-vip">普通</div><div class="d" id="st-vip-d">充值满 100 元升级</div></div>
+      </div>
+
+      <div class="section-head"><div class="t-h2" style="margin-right:auto">充值套餐</div>
+        <span class="t-xs">点击套餐后可选择微信 / 支付宝扫码</span>
+      </div>
+      <div class="plan-grid" id="plan-grid"></div>
+
+      <div class="card mt-2">
+        <div class="card-head"><div class="t-h3">自定义金额</div></div>
+        <div class="card-body">
+          <div class="row row-wrap" style="gap:10px">
+            <div class="input-wrap" style="max-width:210px;flex:1">
+              <span class="pre" style="font-size:14px;color:var(--text-3)">¥</span>
+              <input class="input" id="custom-amount" type="number" min="1" step="1" placeholder="输入金额"
+                style="padding-left:30px;padding-right:64px">
+              <span class="suf" id="custom-pts">= 0 积分</span>
+            </div>
+            <button class="btn btn-primary" id="btn-custom-pay">去支付</button>
+            <span class="t-xs">单笔 1 – 5000 元</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <div class="card-head">
+          <div class="t-h3">价格说明</div>
+        </div>
+        <div class="card-body">
+          <div class="table-wrap">
+            <table class="tbl">
+              <thead><tr><th>类型</th><th>模型</th><th>规格</th><th class="text-r">消耗积分</th></tr></thead>
+              <tbody id="price-table"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         视图 4 · 充值记录
+         ============================================================ -->
+    <section class="page page-narrow hidden" data-panel="orders">
+      <div class="row mb-2 row-wrap" style="gap:10px">
+        <div class="segmented" id="order-filter">
+          <button data-f="all" class="is-active">全部</button>
+          <button data-f="pending">待支付</button>
+          <button data-f="paid">已支付</button>
+          <button data-f="closed">已关闭</button>
+        </div>
+        <div class="spacer"></div>
+        <span class="t-xs" id="order-count"></span>
+      </div>
+      <div class="col" id="order-list" style="gap:9px"></div>
+    </section>
+
+    <!-- ============================================================
+         视图 5 · 个人中心
+         ============================================================ -->
+    <section class="page page-narrow hidden" data-panel="profile">
+      <div class="card">
+        <div class="card-body row" style="gap:16px;flex-wrap:wrap">
+          <span class="avatar lg" id="pf-avatar">U</span>
+          <div style="min-width:0;flex:1">
+            <div class="t-h1" id="pf-name">用户</div>
+            <div class="t-sm" id="pf-mail">—</div>
+            <div class="row mt-1" style="gap:7px">
+              <span class="pill brand" id="pf-role">普通用户</span>
+              <span class="pill" id="pf-since">注册于 —</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="eyebrow">剩余积分</div>
+            <div class="t-h1 mono-num" id="pf-credits">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs mt-3" id="profile-tabs">
+        <button class="tab is-active" data-t="info">基本资料</button>
+        <button class="tab" data-t="pw">修改密码</button>
+        <button class="tab" data-t="data">我的数据</button>
+        <button class="tab" data-t="about">关于</button>
+      </div>
+
+      <div class="tab-panel is-active" data-tp="info">
+        <div class="card">
+          <div class="card-body col" style="gap:14px;max-width:520px">
+            <div class="field">
+              <label class="field-label">用户名</label>
+              <input class="input" id="pf-in-name">
+            </div>
+            <div class="field">
+              <label class="field-label">邮箱</label>
+              <input class="input" id="pf-in-mail" type="email">
+            </div>
+            <div class="field">
+              <label class="field-label">手机号<span class="t-xs" style="margin-left:6px">选填</span></label>
+              <input class="input" id="pf-in-phone">
+            </div>
+            <div class="row">
+              <button class="btn btn-primary" id="btn-save-profile">保存资料</button>
+              <span class="spacer"></span>
+              <button class="btn btn-ghost" id="btn-logout-1">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>退出登录
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tp="pw">
+        <div class="card">
+          <div class="card-body col" style="gap:14px;max-width:520px">
+            <div class="field">
+              <label class="field-label">原密码</label>
+              <input class="input" id="pw-old" type="password" placeholder="请输入当前密码">
+            </div>
+            <div class="field">
+              <label class="field-label">新密码</label>
+              <input class="input" id="pw-new" type="password" placeholder="至少 6 位，含字母和数字">
+              <div class="pw-meter" id="pw-meter"><i></i><i></i><i></i></div>
+            </div>
+            <div class="field">
+              <label class="field-label">确认新密码</label>
+              <input class="input" id="pw-new2" type="password" placeholder="再次输入新密码">
+            </div>
+            <div>
+              <button class="btn btn-primary" id="btn-save-pw">修改密码</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tp="data">
+        <div class="grid g-3">
+          <div class="stat"><div class="k">我的作品</div><div class="v" id="md-jobs">0</div><div class="d">含失败任务</div></div>
+          <div class="stat"><div class="k">消耗积分</div><div class="v" id="md-credits">0</div><div class="d">历史合计</div></div>
+          <div class="stat"><div class="k">充值订单</div><div class="v" id="md-orders">0</div><div class="d">含待支付</div></div>
+        </div>
+        <div class="card mt-2">
+          <div class="card-head"><div class="t-h3">备份我的数据</div></div>
+          <div class="card-body col" style="gap:10px">
+            <div class="t-sm">演示模式下所有数据都存在这台电脑的浏览器里。换电脑或清缓存会丢失，可以导出备份。</div>
+            <div class="row">
+              <button class="btn" id="btn-export-me">
+                <svg class="ico" viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M4 20h16"/></svg>导出我的数据
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-panel" data-tp="about">
+        <div class="card">
+          <div class="card-body col" style="gap:12px">
+            <div class="t-h3">Glad · AI 影像创作平台</div>
+            <div class="t-sm" style="line-height:1.8">
+              本页是<b style="color:var(--text)">演示壳</b>：注册、登录、找回密码、积分、充值全部由前端 localStorage 模拟，
+              没有真实服务器，也没有真实支付。
+            </div>
+            <div class="divider"></div>
+            <div class="t-sm" style="line-height:1.9">
+              <b style="color:var(--text)">接真后端时要做什么：</b><br>
+              1. 把 <span class="t-mono">js/store.js</span> 里的方法改成 <span class="t-mono">fetch('/api/...')</span><br>
+              2. 积分与订单改为服务端裁决，前端数字一律不可信<br>
+              3. 支付改成微信 / 支付宝的官方扫码接口，加积分只走异步回调<br>
+              4. 生成接口指向即梦聚合服务 <span class="t-mono">/v1/images|videos/generations</span>
+            </div>
+            <div class="divider"></div>
+            <div class="t-xs">版本 1.0 · 演示版 · <span id="about-time">—</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- 用户菜单 -->
+<div class="modal-mask" id="user-menu">
+  <div class="modal narrow" style="max-width:280px">
+    <div class="modal-body" style="padding:8px" id="user-menu-body"></div>
+  </div>
+</div>
+
+<!-- 支付弹层 -->
+<div class="modal-mask" id="pay-modal">
+  <div class="modal" style="max-width:430px">
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">扫码支付（演示）</div>
+        <div class="t-h2" id="pay-title">确认支付</div>
+      </div>
+      <button class="x-btn" data-close><svg viewBox="0 0 24 24"><path d="M6 6 18 18M18 6 6 18"/></svg></button>
+    </div>
+    <div class="modal-body" id="pay-body"></div>
+    <div class="modal-foot">
+      <button class="btn" data-close>取消</button>
+      <span class="spacer"></span>
+      <button class="btn btn-primary" id="pay-sim">模拟已支付（演示）</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
