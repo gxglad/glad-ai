@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06060A">
+<title>登录 · Glad AI 影像创作平台</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2329E0FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='17' font-weight='700' fill='%23fff' text-anchor='middle'%3EG%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="ambience"><div class="grid-lines"></div></div>
+
+<div class="auth-wrap">
+
+  <!-- ==================== 左：品牌侧 ==================== -->
+  <aside class="auth-side">
+    <a class="brand" href="index.html" style="padding:0">
+      <span class="brand-mark" style="width:36px;height:36px;border-radius:11px;font-size:17px">G</span>
+      <span>
+        <span class="brand-name" id="brand-name" style="font-size:17px">Glad</span>
+        <span class="brand-sub" id="brand-sub">AI Studio</span>
+      </span>
+    </a>
+
+    <div>
+      <h1 class="t-display" style="margin-bottom:14px">
+        <span class="grad-text">一句话，</span><br>生成电影级画面。
+      </h1>
+      <p class="t-body" style="max-width:420px;line-height:1.8" id="hero-sub">
+        接入多账号额度池，图片与视频一次到位。选择模型、比例、时长，剩下的交给 Glad。
+      </p>
+    </div>
+
+    <div class="col" style="gap:18px;max-width:430px">
+      <div class="auth-feature">
+        <span class="fico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.8" cy="8.8" r="1.8"/><path d="m21 15-4.6-4.6L7 20"/></svg></span>
+        <div>
+          <div class="t-h3">图片生成</div>
+          <div class="t-sm">9 款即梦模型 · 1K / 2K / 4K · 8 种画面比例 · 支持参考图</div>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <span class="fico"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="14" height="14" rx="3"/><path d="m16.5 10.5 5-3v9l-5-3z"/></svg></span>
+        <div>
+          <div class="t-h3">视频生成</div>
+          <div class="t-sm">Seedance 2.0 全系 · 5 / 10 秒 · 最高 4K · 首尾帧控制</div>
+        </div>
+      </div>
+      <div class="auth-feature">
+        <span class="fico"><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5M3 17l9 5 9-5"/></svg></span>
+        <div>
+          <div class="t-h3">额度聚合</div>
+          <div class="t-sm">多账号额度统一调度，按积分计费，用多少扣多少</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-wrap" style="gap:8px">
+      <span class="pill">永久免费注册</span>
+      <span class="pill">积分充值</span>
+      <span class="pill">作品云端留存</span>
+    </div>
+  </aside>
+
+  <!-- ==================== 右：表单 ==================== -->
+  <main class="auth-form-col">
+    <div class="auth-card">
+
+      <!-- 切换账号提示 -->
+      <div class="card hidden mb-2" id="switch-note" style="border-color:rgba(255,176,58,.3);background:rgba(255,176,58,.06)">
+        <div class="card-body row" style="padding:12px 14px;gap:11px">
+          <svg class="ico" style="width:17px;height:17px;flex:none;stroke:#FFD08A;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 9.5v4.5M12 17.5h.01"/></svg>
+          <div class="t-xs" style="flex:1;line-height:1.7" id="switch-note-text">—</div>
+        </div>
+      </div>
+
+      <!-- 登录 / 注册 切换 -->
+      <div class="auth-tabs" id="auth-tabs">
+        <button data-tab="login" class="is-active">登录</button>
+        <button data-tab="register">注册</button>
+      </div>
+
+      <!-- ---------- 登录 ---------- -->
+      <form id="form-login" class="col" style="gap:15px" autocomplete="on">
+        <div>
+          <div class="t-h1">欢迎回来</div>
+          <div class="t-sm">登录后继续你的创作</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">账号</label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+            <input class="input" id="li-account" placeholder="用户名 / 邮箱 / 手机号" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">密码</label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="11" rx="2.6"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+            <input class="input" id="li-password" type="password" placeholder="请输入密码" autocomplete="current-password" style="padding-right:44px">
+            <button type="button" class="x-btn" data-eye="li-password" style="position:absolute;right:6px" aria-label="显示密码">
+              <svg viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12"/><circle cx="12" cy="12" r="2.8"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="row" style="justify-content:space-between">
+          <label class="check">
+            <input type="checkbox" id="li-remember" checked>
+            <span class="box"><svg viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></svg></span>
+            记住我
+          </label>
+          <button type="button" class="t-sm" id="go-forgot" style="color:#C3B4FF">忘记密码？</button>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit" id="btn-login">登 录</button>
+
+        <div class="divider" style="margin:2px 0"></div>
+
+        <div class="t-xs text-c">演示账号：<b style="color:var(--text-2)">demo / demo123</b> ·
+          管理员：<b style="color:var(--text-2)">admin / admin888</b></div>
+        <div class="row" style="gap:8px">
+          <button type="button" class="btn btn-sm" id="btn-demo" style="flex:1">填入演示账号</button>
+          <button type="button" class="btn btn-sm" id="btn-admin" style="flex:1">填入管理员账号</button>
+        </div>
+      </form>
+
+      <!-- ---------- 注册 ---------- -->
+      <form id="form-register" class="col hidden" style="gap:15px" autocomplete="on">
+        <div>
+          <div class="t-h1">创建账号</div>
+          <div class="t-sm">注册后即可开始创作 · 新用户积分默认 0</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">用户名 <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg></span>
+            <input class="input" id="rg-username" placeholder="2–20 位，中文/字母/数字/下划线" autocomplete="username">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">邮箱 <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.6"/><path d="m3 7 9 6 9-6"/></svg></span>
+            <input class="input" id="rg-email" type="email" placeholder="用于找回密码" autocomplete="email">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">手机号 <span class="t-xs" style="margin-left:6px">选填</span></label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M11 18.4h2"/></svg></span>
+            <input class="input" id="rg-phone" placeholder="11 位手机号" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">密码 <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="11" rx="2.6"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+            <input class="input" id="rg-password" type="password" placeholder="至少 6 位，含字母和数字" autocomplete="new-password" style="padding-right:44px">
+            <button type="button" class="x-btn" data-eye="rg-password" style="position:absolute;right:6px" aria-label="显示密码">
+              <svg viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12"/><circle cx="12" cy="12" r="2.8"/></svg>
+            </button>
+          </div>
+          <div class="pw-meter" id="pw-meter"><i></i><i></i><i></i></div>
+          <div class="field-hint" id="pw-hint">建议 8 位以上，混合大小写与数字</div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">确认密码 <span class="req">*</span></label>
+          <div class="input-wrap">
+            <span class="pre"><svg viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></svg></span>
+            <input class="input" id="rg-password2" type="password" placeholder="再次输入密码" autocomplete="new-password">
+          </div>
+        </div>
+
+        <label class="check" style="align-items:flex-start">
+          <input type="checkbox" id="rg-agree">
+          <span class="box" style="margin-top:2px"><svg viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></svg></span>
+          <span style="line-height:1.55">我已阅读并同意<a href="#" style="color:#C3B4FF" id="link-terms">《用户协议》</a>与<a href="#" style="color:#C3B4FF" id="link-privacy">《隐私政策》</a></span>
+        </label>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit" id="btn-register">注 册</button>
+      </form>
+
+      <!-- ---------- 忘记密码 ---------- -->
+      <form id="form-forgot" class="col hidden" style="gap:15px">
+        <div>
+          <button type="button" class="btn btn-sm btn-ghost" id="back-login" style="margin-left:-11px">
+            <svg class="ico" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>返回登录
+          </button>
+          <div class="t-h1 mt-1">找回密码</div>
+          <div class="t-sm">验证邮箱或手机号后重设密码</div>
+        </div>
+
+        <!-- 步骤 1 -->
+        <div id="fp-step1" class="col" style="gap:15px">
+          <div class="field">
+            <label class="field-label">邮箱 / 手机号</label>
+            <div class="input-wrap">
+              <span class="pre"><svg viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.6"/><path d="m3 7 9 6 9-6"/></svg></span>
+              <input class="input" id="fp-account" placeholder="注册时填写的邮箱或手机号">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-lg btn-block" id="btn-send-code">发送验证码</button>
+          <div class="t-xs text-c">演示版：验证码会直接显示在页面上，不会真的发短信/邮件</div>
+        </div>
+
+        <!-- 步骤 2 -->
+        <div id="fp-step2" class="col hidden" style="gap:15px">
+          <div class="card" style="border-color:rgba(255,176,58,.3);background:rgba(255,176,58,.06)">
+            <div class="card-body row" style="padding:11px 13px;gap:10px">
+              <svg class="ico" style="width:16px;height:16px;flex:none;stroke:#FFD08A;fill:none;stroke-width:1.8" viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 9.5v4.5M12 17.5h.01"/></svg>
+              <div class="t-xs" style="flex:1;line-height:1.6">
+                演示验证码：<b style="color:#FFD08A;font-size:15px;letter-spacing:.14em" id="fp-code-show">------</b><br>
+                <span style="color:var(--text-4)">真实环境这里不会显示，改为发送到你的邮箱/手机</span>
+              </div>
+              <button type="button" class="btn btn-sm" id="btn-fill-code">填入</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label">验证码</label>
+            <input class="input" id="fp-code" placeholder="6 位数字" inputmode="numeric" maxlength="6"
+              style="letter-spacing:.3em;font-size:16px;font-weight:600">
+          </div>
+          <div class="field">
+            <label class="field-label">新密码</label>
+            <div class="input-wrap">
+              <span class="pre"><svg viewBox="0 0 24 24"><rect x="4" y="10.5" width="16" height="11" rx="2.6"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg></span>
+              <input class="input" id="fp-password" type="password" placeholder="至少 6 位，含字母和数字" style="padding-right:44px">
+              <button type="button" class="x-btn" data-eye="fp-password" style="position:absolute;right:6px">
+                <svg viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12"/><circle cx="12" cy="12" r="2.8"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">确认新密码</label>
+            <div class="input-wrap">
+              <span class="pre"><svg viewBox="0 0 24 24"><path d="m4 12.5 5 5L20 6.5"/></svg></span>
+              <input class="input" id="fp-password2" type="password" placeholder="再次输入新密码">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary btn-lg btn-block" id="btn-reset">重设密码并登录</button>
+          <button type="button" class="btn btn-ghost btn-block btn-sm" id="btn-resend">重新发送验证码</button>
+        </div>
+      </form>
+
+      <div class="foot" style="margin-top:26px;border:0;padding:0;justify-content:center">
+        <span>© <span id="year"></span> <span id="foot-brand">Glad</span></span>
+        <span>·</span>
+        <a href="index.html">返回首页</a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="js/store.js"></script>
+<script src="js/ui.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => Array.from(document.querySelectorAll(s));
+
+  GLAD.seed();
+  const c = GLAD.config();
+  document.title = '登录 · ' + c.site.name + ' ' + c.site.tagline;
+  $('#brand-name').textContent = c.site.name;
+  $('#brand-sub').textContent = c.site.tagline;
+  $('#foot-brand').textContent = c.site.footer || c.site.name;
+  $('#year').textContent = new Date().getFullYear();
+  if (c.site.subtitle) $('#hero-sub').textContent = c.site.subtitle;
+
+  /* ---------- 登录成功后的去处 ----------
+     ?next=admin.html  → 登录后回后台
+     ?switch=1         → 强制显示登录表单（即使当前已登录）
+     否则已登录就直接进创作台。 */
+  const QS = new URLSearchParams(location.search);
+  function safeNext(v) {
+    if (!v) return '';
+    // 只允许同站相对路径，防止被拿去做跳转钓鱼
+    if (/^[a-z]+:/i.test(v) || v.startsWith('//')) return '';
+    return v.replace(/^\.?\//, '');
+  }
+  const NEXT = safeNext(QS.get('next'));
+  const SWITCH = QS.get('switch') === '1';
+  const go = () => location.replace(NEXT || 'index.html');
+
+  const already = GLAD.currentUser();
+  if (already && !SWITCH) { go(); return; }
+  if (already && SWITCH) {
+    const note = $('#switch-note');
+    note.classList.remove('hidden');
+    $('#switch-note-text').innerHTML =
+      '当前已登录：<b style="color:#FFD08A">' + UI.esc(already.username) + '</b>' +
+      (already.role === 'admin' ? '（管理员）' : '（普通用户）') +
+      '。用下面的表单登录其他账号即可切换。';
+  }
+
+  /* ---------- 面板切换 ---------- */
+  function show(which) {
+    ['login', 'register', 'forgot'].forEach((k) => {
+      $('#form-' + k).classList.toggle('hidden', k !== which);
+    });
+    $$('#auth-tabs button').forEach((b) => b.classList.toggle('is-active', b.dataset.tab === which));
+    $('#auth-tabs').classList.toggle('hidden', which === 'forgot');
+  }
+  $$('#auth-tabs button').forEach((b) => b.addEventListener('click', () => show(b.dataset.tab)));
+  $('#go-forgot').addEventListener('click', () => show('forgot'));
+  $('#back-login').addEventListener('click', () => show('login'));
+
+  /* ---------- 显示/隐藏密码 ---------- */
+  $$('[data-eye]').forEach((b) => b.addEventListener('click', () => {
+    const inp = document.getElementById(b.dataset.eye);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  }));
+
+  function busy(btn, on, text) {
+    btn.classList.toggle('is-disabled', on);
+    if (on) { btn.dataset.old = btn.textContent; btn.textContent = text || '处理中…'; }
+    else if (btn.dataset.old) btn.textContent = btn.dataset.old;
+  }
+
+  /* ---------- 登录 ---------- */
+  $('#form-login').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = $('#btn-login');
+    busy(btn, true, '登录中…');
+    const r = await GLAD.login({
+      account: $('#li-account').value,
+      password: $('#li-password').value,
+      remember: $('#li-remember').checked,
+    });
+    busy(btn, false);
+    if (!r.ok) {
+      UI.err(r.msg);
+      UI.setErr($('#li-password'), r.msg.includes('密码') || r.msg.includes('账号') ? r.msg : null);
+      return;
+    }
+    UI.ok('登录成功，正在进入…');
+    setTimeout(go, 420);
+  });
+
+  $('#btn-demo').addEventListener('click', () => {
+    $('#li-account').value = 'demo';
+    $('#li-password').value = 'demo123';
+    UI.info('已填入演示账号，点「登录」即可');
+  });
+
+  $('#btn-admin').addEventListener('click', () => {
+    $('#li-account').value = 'admin';
+    $('#li-password').value = 'admin888';
+    UI.info('已填入管理员账号，点「登录」即可');
+  });
+
+  /* ---------- 注册 ---------- */
+  $('#rg-password').addEventListener('input', (e) => {
+    const v = e.target.value;
+    const score = (v.length >= 6 ? 1 : 0) +
+      (/[a-zA-Z]/.test(v) && /[0-9]/.test(v) ? 1 : 0) +
+      (v.length >= 10 ? 1 : 0);
+    $$('#pw-meter i').forEach((i, idx) => { i.className = idx < score ? ('on-' + Math.max(1, score)) : ''; });
+    $('#pw-hint').textContent = ['太短了', '偏弱', '还不错', '很安全'][score] +
+      (score < 3 ? ' · 建议 8 位以上，混合大小写与数字' : '');
+  });
+
+  $('#form-register').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!$('#rg-agree').checked) { UI.warn('请先阅读并同意用户协议'); return; }
+    const btn = $('#btn-register');
+    busy(btn, true, '注册中…');
+    const r = await GLAD.register({
+      username: $('#rg-username').value,
+      email: $('#rg-email').value,
+      phone: $('#rg-phone').value,
+      password: $('#rg-password').value,
+      password2: $('#rg-password2').value,
+    });
+    busy(btn, false);
+    if (!r.ok) { UI.err(r.msg); return; }
+    UI.ok('注册成功！积分 ' + (r.user.credits || 0) + '，正在进入…');
+    setTimeout(go, 520);
+  });
+
+  /* ---------- 忘记密码 ---------- */
+  let fpAccount = '';
+  $('#btn-send-code').addEventListener('click', async () => {
+    const btn = $('#btn-send-code');
+    busy(btn, true, '发送中…');
+    const r = await GLAD.sendResetCode($('#fp-account').value);
+    busy(btn, false);
+    if (!r.ok) { UI.err(r.msg); return; }
+    fpAccount = $('#fp-account').value.trim();
+    $('#fp-code-show').textContent = r.code;
+    $('#fp-step1').classList.add('hidden');
+    $('#fp-step2').classList.remove('hidden');
+    UI.ok('验证码已生成（演示）');
+  });
+  $('#btn-fill-code').addEventListener('click', () => {
+    $('#fp-code').value = $('#fp-code-show').textContent.trim();
+  });
+  $('#btn-resend').addEventListener('click', () => {
+    $('#fp-step1').classList.remove('hidden');
+    $('#fp-step2').classList.add('hidden');
+  });
+  $('#btn-reset').addEventListener('click', async () => {
+    const btn = $('#btn-reset');
+    busy(btn, true, '提交中…');
+    const r = await GLAD.resetPassword({
+      account: fpAccount,
+      code: $('#fp-code').value.trim(),
+      password: $('#fp-password').value,
+      password2: $('#fp-password2').value,
+    });
+    busy(btn, false);
+    if (!r.ok) { UI.err(r.msg); return; }
+    const lr = await GLAD.login({ account: fpAccount, password: $('#fp-password').value });
+    UI.ok(lr.ok ? '密码已重设，正在进入…' : '密码已重设，请重新登录');
+    setTimeout(() => { if (lr.ok) go(); else location.replace('auth.html?switch=1'); }, 600);
+  });
+
+  $('#link-terms').addEventListener('click', (e) => { e.preventDefault(); terms('用户协议'); });
+  $('#link-privacy').addEventListener('click', (e) => { e.preventDefault(); terms('隐私政策'); });
+  function terms(t) {
+    UI.modal({
+      title: t, size: 'wide', foot: '<button class="btn btn-primary" data-close>我知道了</button>',
+      body: '<div class="t-sm" style="line-height:1.9">' +
+        '<p><b style="color:var(--text)">演示说明：</b>本站为演示壳，' + t + '内容为占位文本，正式上线前需替换为法务确认的版本。</p>' +
+        '<p class="mt-2"><b style="color:var(--text)">1. 服务内容</b><br>本站提供基于第三方 AI 模型的图片与视频生成服务，按积分计费。</p>' +
+        '<p class="mt-2"><b style="color:var(--text)">2. 账号</b><br>请妥善保管账号密码。因个人原因造成的账号泄露与积分损失，本站不承担责任。</p>' +
+        '<p class="mt-2"><b style="color:var(--text)">3. 内容规范</b><br>禁止生成违反法律法规、侵犯他人权益的内容。违规账号将被封禁。</p>' +
+        '<p class="mt-2"><b style="color:var(--text)">4. 积分与退款</b><br>积分充值后不可退款，请按需购买。</p>' +
+        '<p class="mt-2"><b style="color:var(--text)">5. 数据</b><br>演示模式下数据保存在本机浏览器，换设备或清缓存将丢失。</p>' +
+        '</div>',
+    });
+  }
+
+  // 回车提交
+  $$('#form-login input').forEach((i) => i.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') $('#form-login').requestSubmit();
+  }));
+})();
+</script>
+</body>
+</html>
